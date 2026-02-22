@@ -12,9 +12,70 @@ class Themer {
     this.injectStyles();
     this.updateDropdown();
 
-    this.api.ui.settings.addTab("themer", "Themer", (container) =>
-      this.renderTab(container),
+    this.api.ui.settings.addSection(
+      "tab-appearance",
+      "Custom Themes",
+      (container) => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-outline";
+        btn.style.width = "100%";
+        btn.style.marginTop = "10px";
+        btn.textContent = "Manage Custom Themes";
+        btn.onclick = () => {
+          // Create a temporary modal or view for theme management
+          // For simplicity, let's reuse the existing renderTab logic but inside a new modal
+          this.openThemeManager();
+        };
+        container.appendChild(btn);
+      },
     );
+  }
+
+  openThemeManager() {
+    // Create a modal for theme management
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop open";
+    backdrop.style.zIndex = "10001"; // Above settings modal
+
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.style.maxWidth = "800px";
+    modal.style.width = "90%";
+    modal.style.height = "80vh";
+    modal.style.display = "flex";
+    modal.style.flexDirection = "column";
+
+    const header = document.createElement("div");
+    header.className = "modal-header";
+    header.innerHTML = `
+          <h3 style="margin: 0">Theme Manager</h3>
+          <button class="close-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+          </button>
+      `;
+
+    const content = document.createElement("div");
+    content.className = "modal-content";
+    content.style.flex = "1";
+    content.style.overflowY = "auto";
+
+    modal.appendChild(header);
+    modal.appendChild(content);
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    // Close handler
+    const close = () => backdrop.remove();
+    header.querySelector(".close-btn").onclick = close;
+    backdrop.onclick = (e) => {
+      if (e.target === backdrop) close();
+    };
+
+    // Render content
+    this.renderTab(content);
   }
 
   async deactivate() {
