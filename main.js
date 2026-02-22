@@ -238,23 +238,48 @@ class Themer {
 
     for (const [key, label] of Object.entries(colorLabels)) {
       const group = document.createElement("div");
-      group.innerHTML = `<label style="display:block; margin-bottom:5px; font-size:0.9rem;">${label}</label>`;
+      group.style.display = "flex";
+      group.style.alignItems = "center";
+      group.style.justifyContent = "space-between";
+      group.style.padding = "10px";
+      group.style.border = "1px solid var(--border)";
+      group.style.borderRadius = "8px";
+      group.style.background = "var(--bg-card)";
+
+      const labelEl = document.createElement("label");
+      labelEl.textContent = label;
+      labelEl.style.fontWeight = "500";
+      labelEl.style.fontSize = "0.9rem";
+
+      const inputWrapper = document.createElement("div");
+      inputWrapper.style.position = "relative";
+      inputWrapper.style.width = "32px";
+      inputWrapper.style.height = "32px";
+      inputWrapper.style.borderRadius = "50%";
+      inputWrapper.style.overflow = "hidden";
+      inputWrapper.style.border = "2px solid var(--border)";
+      inputWrapper.style.cursor = "pointer";
+      inputWrapper.style.background = currentTheme.colors[key] || "#000000";
 
       const input = document.createElement("input");
       input.type = "color";
       input.value = currentTheme.colors[key] || "#000000";
-      input.style.width = "100%";
-      input.style.height = "40px";
-      input.style.padding = "0";
-      input.style.border = "1px solid var(--border)";
-      input.style.borderRadius = "4px";
+      input.style.position = "absolute";
+      input.style.top = "-50%";
+      input.style.left = "-50%";
+      input.style.width = "200%";
+      input.style.height = "200%";
       input.style.cursor = "pointer";
+      input.style.opacity = "0"; // Hide the default input but keep it clickable
 
       input.onchange = (e) => {
         currentTheme.colors[key] = e.target.value;
+        inputWrapper.style.background = e.target.value;
       };
 
-      group.appendChild(input);
+      inputWrapper.appendChild(input);
+      group.appendChild(labelEl);
+      group.appendChild(inputWrapper);
       colorsContainer.appendChild(group);
     }
     form.appendChild(colorsContainer);
