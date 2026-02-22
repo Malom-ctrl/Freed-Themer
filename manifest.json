@@ -1,0 +1,8 @@
+{
+  "id": "io.github.malom-ctrl.Themer",
+  "name": "Themer",
+  "version": "0.0.1",
+  "compatibleAppVersion": ">=1.3.3",
+  "description": "Create your own themes!",
+  "main": "main.js"
+}
