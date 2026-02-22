@@ -1,4 +1,4 @@
-export default class Themer {
+class Themer {
   constructor(api) {
     this.api = api;
     this.themes = [];
@@ -296,4 +296,9 @@ export default class Themer {
 
     container.appendChild(form);
   }
+}
+
+export async function activate(api) {
+  const themer = new Themer(api);
+  await themer.activate();
 }
