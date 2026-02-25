@@ -20,8 +20,6 @@ class Themer {
         btn.className = "btn btn-outline themer-manage-btn";
         btn.textContent = "Manage Custom Themes";
         btn.onclick = () => {
-          // Create a temporary modal or view for theme management
-          // For simplicity, let's reuse the existing renderTab logic but inside a new modal
           this.openThemeManager();
         };
         container.appendChild(btn);
@@ -230,7 +228,7 @@ class Themer {
   }
 
   getCurrentThemeColors() {
-    const style = getComputedStyle(document.documentElement);
+    const style = getComputedStyle(document.body);
     const colors = {};
     const keys = [
       "--bg-body",
