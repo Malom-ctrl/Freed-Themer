@@ -20,6 +20,8 @@ class Themer {
         btn.className = "btn btn-outline themer-manage-btn";
         btn.textContent = "Manage Custom Themes";
         btn.onclick = () => {
+          // Create a temporary modal or view for theme management
+          // For simplicity, let's reuse the existing renderTab logic but inside a new modal
           this.openThemeManager();
         };
         container.appendChild(btn);
@@ -227,6 +229,30 @@ class Themer {
     container.appendChild(list);
   }
 
+  getCurrentThemeColors() {
+    const style = getComputedStyle(document.documentElement);
+    const colors = {};
+    const keys = [
+      "--bg-body",
+      "--bg-sidebar",
+      "--bg-card",
+      "--text-main",
+      "--text-muted",
+      "--primary",
+      "--primary-hover",
+      "--border",
+      "--scrollbar-thumb",
+      "--scrollbar-thumb-hover",
+      "--highlight-color",
+    ];
+
+    keys.forEach((key) => {
+      const val = style.getPropertyValue(key).trim();
+      colors[key] = this.api.ui.utils.rgbToHex(val);
+    });
+    return colors;
+  }
+
   renderEditor(container, theme = null) {
     while (container.firstChild) container.removeChild(container.firstChild);
 
@@ -237,19 +263,7 @@ class Themer {
       : {
           id: `custom-${Date.now()}`,
           name: "New Theme",
-          colors: {
-            "--bg-body": "#ffffff",
-            "--bg-sidebar": "#f8f9fa",
-            "--bg-card": "#ffffff",
-            "--text-main": "#1f2937",
-            "--text-muted": "#6b7280",
-            "--primary": "#4f46e5",
-            "--primary-hover": "#4338ca",
-            "--border": "#e5e7eb",
-            "--scrollbar-thumb": "#d1d5db",
-            "--scrollbar-thumb-hover": "#9ca3af",
-            "--highlight-color": "#facc15",
-          },
+          colors: this.getCurrentThemeColors(),
         };
 
     const header = document.createElement("div");
