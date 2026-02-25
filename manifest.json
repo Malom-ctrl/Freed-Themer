@@ -1,7 +1,7 @@
 {
   "id": "io.github.malom-ctrl.Themer",
   "name": "Themer",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "compatibleAppVersion": ">=1.4.2",
   "description": "Create your own themes!",
   "files": ["main.js", "styles.css"]
