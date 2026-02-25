@@ -17,13 +17,9 @@ class Themer {
       "Custom Themes",
       (container) => {
         const btn = document.createElement("button");
-        btn.className = "btn btn-outline";
-        btn.style.width = "100%";
-        btn.style.marginTop = "10px";
+        btn.className = "btn btn-outline themer-manage-btn";
         btn.textContent = "Manage Custom Themes";
         btn.onclick = () => {
-          // Create a temporary modal or view for theme management
-          // For simplicity, let's reuse the existing renderTab logic but inside a new modal
           this.openThemeManager();
         };
         container.appendChild(btn);
@@ -34,33 +30,50 @@ class Themer {
   openThemeManager() {
     // Create a modal for theme management
     const backdrop = document.createElement("div");
-    backdrop.className = "modal-backdrop open";
-    backdrop.style.zIndex = "10001"; // Above settings modal
+    backdrop.className = "modal-backdrop open themer-modal-backdrop";
 
     const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.style.maxWidth = "800px";
-    modal.style.width = "90%";
-    modal.style.height = "80vh";
-    modal.style.display = "flex";
-    modal.style.flexDirection = "column";
+    modal.className = "modal themer-modal";
 
     const header = document.createElement("div");
     header.className = "modal-header";
-    header.innerHTML = `
-          <h3 style="margin: 0">Theme Manager</h3>
-          <button class="close-btn">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-          </button>
-      `;
+
+    const h3 = document.createElement("h3");
+    h3.className = "themer-modal-header-title";
+    h3.textContent = "Theme Manager";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "close-btn";
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "24");
+    svg.setAttribute("height", "24");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+
+    const line1 = document.createElementNS(svgNS, "line");
+    line1.setAttribute("x1", "18");
+    line1.setAttribute("y1", "6");
+    line1.setAttribute("x2", "6");
+    line1.setAttribute("y2", "18");
+    const line2 = document.createElementNS(svgNS, "line");
+    line2.setAttribute("x1", "6");
+    line2.setAttribute("y1", "6");
+    line2.setAttribute("x2", "18");
+    line2.setAttribute("y2", "18");
+
+    svg.appendChild(line1);
+    svg.appendChild(line2);
+    closeBtn.appendChild(svg);
+
+    header.appendChild(h3);
+    header.appendChild(closeBtn);
 
     const content = document.createElement("div");
-    content.className = "modal-content";
-    content.style.flex = "1";
-    content.style.overflowY = "auto";
+    content.className = "modal-content themer-modal-content";
 
     modal.appendChild(header);
     modal.appendChild(content);
@@ -137,17 +150,14 @@ class Themer {
   }
 
   renderTab(container) {
-    container.innerHTML = "";
+    while (container.firstChild) container.removeChild(container.firstChild);
 
     const header = document.createElement("div");
-    header.style.display = "flex";
-    header.style.justifyContent = "space-between";
-    header.style.alignItems = "center";
-    header.style.marginBottom = "20px";
+    header.className = "themer-tab-header";
 
     const title = document.createElement("h3");
     title.textContent = "Custom Themes";
-    title.style.margin = "0";
+    title.className = "themer-tab-title";
 
     const createBtn = document.createElement("button");
     createBtn.textContent = "Create New Theme";
@@ -161,33 +171,25 @@ class Themer {
     if (this.themes.length === 0) {
       const empty = document.createElement("div");
       empty.textContent = "No custom themes created yet.";
-      empty.style.color = "var(--text-muted)";
-      empty.style.textAlign = "center";
-      empty.style.padding = "20px";
+      empty.className = "themer-empty-state";
       container.appendChild(empty);
       return;
     }
 
     const list = document.createElement("div");
-    list.style.display = "grid";
-    list.style.gap = "10px";
+    list.className = "themer-theme-list";
 
     this.themes.forEach((theme) => {
       const item = document.createElement("div");
-      item.style.border = "1px solid var(--border)";
-      item.style.padding = "15px";
-      item.style.borderRadius = "8px";
-      item.style.display = "flex";
-      item.style.justifyContent = "space-between";
-      item.style.alignItems = "center";
-      item.style.background = "var(--bg-card)";
+      item.className = "themer-theme-item";
 
       const info = document.createElement("div");
-      info.innerHTML = `<strong>${theme.name}</strong>`;
+      const strong = document.createElement("strong");
+      strong.textContent = theme.name;
+      info.appendChild(strong);
 
       const actions = document.createElement("div");
-      actions.style.display = "flex";
-      actions.style.gap = "8px";
+      actions.className = "themer-theme-actions";
 
       const editBtn = document.createElement("button");
       editBtn.textContent = "Edit";
@@ -196,9 +198,7 @@ class Themer {
 
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Delete";
-      deleteBtn.className = "btn btn-outline";
-      deleteBtn.style.color = "#ef4444";
-      deleteBtn.style.borderColor = "#ef4444";
+      deleteBtn.className = "btn btn-outline themer-btn-delete";
       deleteBtn.onclick = async () => {
         if (confirm(`Delete theme "${theme.name}"?`)) {
           this.themes = this.themes.filter((t) => t.id !== theme.id);
@@ -228,7 +228,7 @@ class Themer {
   }
 
   renderEditor(container, theme = null) {
-    container.innerHTML = "";
+    while (container.firstChild) container.removeChild(container.firstChild);
 
     const isNew = !theme;
     // Deep clone the theme to avoid modifying the original object in memory before saving
@@ -253,35 +253,32 @@ class Themer {
         };
 
     const header = document.createElement("div");
-    header.style.marginBottom = "20px";
-    header.innerHTML = `<h3>${isNew ? "Create Theme" : "Edit Theme"}</h3>`;
+    header.className = "themer-editor-header";
+    const h3 = document.createElement("h3");
+    h3.textContent = isNew ? "Create Theme" : "Edit Theme";
+    header.appendChild(h3);
     container.appendChild(header);
 
     const form = document.createElement("div");
-    form.style.display = "grid";
-    form.style.gap = "15px";
+    form.className = "themer-editor-form";
 
     // Name Input
     const nameGroup = document.createElement("div");
-    nameGroup.innerHTML = `<label style="display:block; margin-bottom:5px; font-weight:600;">Theme Name</label>`;
+    const nameLabel = document.createElement("label");
+    nameLabel.className = "themer-input-label";
+    nameLabel.textContent = "Theme Name";
+    nameGroup.appendChild(nameLabel);
+
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.value = currentTheme.name;
-    nameInput.style.width = "100%";
-    nameInput.style.padding = "8px";
-    nameInput.style.border = "1px solid var(--border)";
-    nameInput.style.borderRadius = "4px";
-    nameInput.style.background = "var(--bg-body)";
-    nameInput.style.color = "var(--text-main)";
+    nameInput.className = "themer-text-input";
     nameGroup.appendChild(nameInput);
     form.appendChild(nameGroup);
 
     // Color Inputs
     const colorsContainer = document.createElement("div");
-    colorsContainer.style.display = "grid";
-    colorsContainer.style.gridTemplateColumns =
-      "repeat(auto-fill, minmax(200px, 1fr))";
-    colorsContainer.style.gap = "15px";
+    colorsContainer.className = "themer-colors-grid";
 
     const colorLabels = {
       "--bg-body": "Body Background",
@@ -299,39 +296,20 @@ class Themer {
 
     for (const [key, label] of Object.entries(colorLabels)) {
       const group = document.createElement("div");
-      group.style.display = "flex";
-      group.style.alignItems = "center";
-      group.style.justifyContent = "space-between";
-      group.style.padding = "10px";
-      group.style.border = "1px solid var(--border)";
-      group.style.borderRadius = "8px";
-      group.style.background = "var(--bg-card)";
+      group.className = "themer-color-group";
 
       const labelEl = document.createElement("label");
       labelEl.textContent = label;
-      labelEl.style.fontWeight = "500";
-      labelEl.style.fontSize = "0.9rem";
+      labelEl.className = "themer-color-label";
 
       const inputWrapper = document.createElement("div");
-      inputWrapper.style.position = "relative";
-      inputWrapper.style.width = "32px";
-      inputWrapper.style.height = "32px";
-      inputWrapper.style.borderRadius = "50%";
-      inputWrapper.style.overflow = "hidden";
-      inputWrapper.style.border = "2px solid var(--border)";
-      inputWrapper.style.cursor = "pointer";
+      inputWrapper.className = "themer-color-input-wrapper";
       inputWrapper.style.background = currentTheme.colors[key] || "#000000";
 
       const input = document.createElement("input");
       input.type = "color";
       input.value = currentTheme.colors[key] || "#000000";
-      input.style.position = "absolute";
-      input.style.top = "-50%";
-      input.style.left = "-50%";
-      input.style.width = "200%";
-      input.style.height = "200%";
-      input.style.cursor = "pointer";
-      input.style.opacity = "0"; // Hide the default input but keep it clickable
+      input.className = "themer-color-input";
 
       input.onchange = (e) => {
         currentTheme.colors[key] = e.target.value;
@@ -347,9 +325,7 @@ class Themer {
 
     // Actions
     const actions = document.createElement("div");
-    actions.style.marginTop = "20px";
-    actions.style.display = "flex";
-    actions.style.gap = "10px";
+    actions.className = "themer-editor-actions";
 
     const saveBtn = document.createElement("button");
     saveBtn.textContent = "Save Theme";
